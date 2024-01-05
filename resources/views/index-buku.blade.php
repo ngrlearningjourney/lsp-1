@@ -11,20 +11,20 @@
 @section('content')
 <div class="mt-3 d-flex justify-content-between">
   <div class="title">
-    <h2>Daftar Transaksi</h2>
+    <h2>Daftar Buku</h2>
   </div>
   <div>
-    <a href="{{ route('create.transaksi') }}" class="btn btn-primary">Tambah Transaksi</a>
+    <a href="{{ route('create.buku') }}" class="btn btn-primary">Tambah Buku</a>
   </div>
 </div>
 <div class="index mt-3">
   <div class="table-responsive small">
-    <table class="table table-striped table-sm" id="tabel_transaksi">
+    <table class="table table-striped table-sm" id="tabel_buku">
         <thead>
           <tr>
-            <th scope="col">Nama Pelanggan</th>
-            <th scope="col">Deskripsi Transaksi</th>
-            <th scope="col">Tanggal</th>
+            <th scope="col">Nama Buku</th>
+            <th scope="col">Deskripsi Buku</th>
+            <th scope="col">Jumlah Buku</th>
           </tr>
         </thead>
     </table>
@@ -33,4 +33,29 @@
 @endsection
 
 @push('js')
+  <script>
+    $(document).ready(function(){
+      $('#tabel_buku').DataTable({
+        processing:true,
+        serverSide:true,
+        ajax:{
+          url:"{{ route('fetch.buku') }}"
+        },
+        columns:[
+          {
+            data:'nama_buku',
+            name:'nama_buku'
+          },
+          {
+            data:'deskripsi_buku',
+            name:'deskripsi_buku'
+          },
+          {
+            data:'jumlah_buku',
+            name:'jumlah_buku'
+          },
+        ]
+      })
+    })
+  </script>
 @endpush
