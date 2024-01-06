@@ -14,7 +14,7 @@
     <h2>Daftar Transaksi</h2>
   </div>
   <div>
-    <a href="{{ route('create.transaksi') }}" class="btn btn-primary">Tambah Transaksi</a>
+    <a href="{{ route('create.transaksi.pelanggan') }}" class="btn btn-primary">Tambah Transaksi</a>
   </div>
 </div>
 <div class="index mt-3">

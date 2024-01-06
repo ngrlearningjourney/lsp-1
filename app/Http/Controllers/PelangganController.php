@@ -26,7 +26,7 @@ class PelangganController extends Controller
         ]);
 
         Pelanggan::create([
-            "nama" => $request->nama_pelanggan,
+            "nama_pelanggan" => $request->nama_pelanggan,
             "hapus_pelanggan" => 0,
         ]);
 

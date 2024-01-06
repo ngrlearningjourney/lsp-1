@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transaksis', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('id_pelanggan');
-            $table->string('deskripsi_transkasi');
+            $table->string('deskripsi_transaksi');
             $table->string('hapus_transaksi');
             $table->timestamps();
             $table->foreign('id_pelanggan')

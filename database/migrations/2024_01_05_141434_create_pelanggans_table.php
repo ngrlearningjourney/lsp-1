@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pelanggans', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nama');
+            $table->string('nama_pelanggan');
             $table->tinyInteger('hapus_pelanggan');
             $table->timestamps();
         });

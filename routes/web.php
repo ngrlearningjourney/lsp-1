@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,9 +16,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // transaksi
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [TransaksiController::class,'index_transaksi'])->name('index.transaksi');
+Route::get('/create-transaksi-pelanggan', [TransaksiController::class,'create_transaksi_pelanggan'])->name('create.transaksi.pelanggan');
+Route::get('/fetch-transaksi-pelanggan',[TransaksiController::class,'fetch_transaksi_pelanggan'])->name('fetch.transaksi.pelanggan');
+Route::get('/pilih-pelanggan/{id}',[TransaksiController::class,'create_transaksi'])->name('create.transaksi');
+Route::get('/fetch-transaksi-buku',[TransaksiController::class,'fetch_transaksi_buku'])->name('fetch.transaksi.buku');
+Route::post('/store-transaksi',[TransaksiController::class,'store_transaksi'])->name('store.transaksi');
+
 
 // buku
 Route::get('/index-buku',[BukuController::class,'index_buku'])->name('index.buku');

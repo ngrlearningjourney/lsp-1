@@ -41,8 +41,8 @@
         },
         columns:[
           {
-            data:'nama',
-            name:'nama'
+            data:'nama_pelanggan',
+            name:'nama_pelanggan'
           },
         ]
       })

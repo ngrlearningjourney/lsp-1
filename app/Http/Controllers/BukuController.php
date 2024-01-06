@@ -25,15 +25,12 @@ class BukuController extends Controller
         $request->validate([
             'nama_buku' => 'required | min:10 | max:225',
             'deskripsi_buku' => 'required | min:10 | max:225',
-            'jumlah_buku' => 'required'
         ]);
-
-        $convert_str_to_int = (int) $request->jumlah_buku;
 
         Buku::create([
             "nama_buku" => $request->nama_buku,
             "deskripsi_buku" => $request->deskripsi_buku,
-            "jumlah_buku" => $convert_str_to_int,
+            "jumlah_buku" => 1,
             "hapus_buku" => 0
         ]);
 

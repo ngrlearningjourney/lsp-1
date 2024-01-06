@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('id_buku');
             $table->date('tanggal_awal_peminjaman');
             $table->date('tanggal_akhir_peminjaman');
+            $table->date('tanggal_pengembalian')->nullable();
             $table->foreign('id_transaksi')
                 ->references('id')
                 ->on('transaksis')

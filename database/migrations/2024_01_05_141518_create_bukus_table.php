@@ -15,7 +15,7 @@ return new class extends Migration
             $table->increments('id');
             $table->string('nama_buku');
             $table->string('deskripsi_buku');
-            $table->integer('jumlah_buku');
+            $table->string('jumlah_buku');
             $table->tinyInteger('hapus_buku');
             $table->timestamps();
         });
