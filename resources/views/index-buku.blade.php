@@ -24,11 +24,36 @@
           <tr>
             <th scope="col">Nama Buku</th>
             <th scope="col">Deskripsi Buku</th>
+            <th scope="col">Aksi</th>
           </tr>
         </thead>
     </table>
   </div>
 </div>
+
+<!-- modal hapus per id -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="" id="form_action" method="post">
+        @csrf
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Penghapusan</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h4 align="center">Apakah benar ingin melakukan penghapusan?</h4>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+          <button class="btn btn-danger" type="submit">Hapus!</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 @endsection
 
 @push('js')
@@ -49,8 +74,22 @@
             data:'deskripsi_buku',
             name:'deskripsi_buku'
           },
+          {
+            data:'actions',
+            name:'actions'
+          }
         ]
       })
     })
+
+    let id_buku;
+    $(document).on('click','.delete',function(){
+      id_buku = $(this).attr('id');
+      $('#confirmModal').modal('show');
+      let link = "/hapus-buku/" + id_buku;
+      document.getElementById("form_action").setAttribute("action", link);
+    })
+
+    
   </script>
 @endpush

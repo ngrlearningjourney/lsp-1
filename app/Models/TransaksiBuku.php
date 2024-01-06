@@ -16,6 +16,7 @@ class TransaksiBuku extends Model
         "id_buku",
         "tanggal_awal_peminjaman",
         "tanggal_akhir_peminjaman",
-        "tanggal_pengembalian"
+        "tanggal_pengembalian",
+        "hapus_transaksi_buku"
     ];
 }

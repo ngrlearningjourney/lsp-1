@@ -14,7 +14,18 @@ class BukuController extends Controller
 
     public function fetch_buku(){
         $bukus = Buku::where('hapus_buku',0)->get();
-        return datatables()::of($bukus)->addIndexColumn()->make(true);
+        return datatables()::of($bukus)
+        ->addColumn('actions',
+        '
+            <div class="d-flex">
+                <a href="/edit-buku/{{ $id }}" class="btn btn-primary me-2">Ubah</a>
+                <button type="button" id="{{ $id }}" class="btn btn-danger delete">Hapus</button>
+            </div>
+        '
+        )
+        ->rawColumns(['actions'])
+        ->addIndexColumn()
+        ->make(true);
     }
 
     public function create_buku(){
@@ -32,6 +43,14 @@ class BukuController extends Controller
             "deskripsi_buku" => $request->deskripsi_buku,
             "jumlah_buku" => 1,
             "hapus_buku" => 0
+        ]);
+
+        return redirect('/index-buku');
+    }
+
+    public function delete_buku($id){
+        Buku::find($id)->update([
+            'hapus_buku' => 1
         ]);
 
         return redirect('/index-buku');

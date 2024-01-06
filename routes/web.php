@@ -22,6 +22,10 @@ Route::get('/fetch-transaksi-pelanggan',[TransaksiController::class,'fetch_trans
 Route::get('/pilih-pelanggan/{id}',[TransaksiController::class,'create_transaksi'])->name('create.transaksi');
 Route::get('/fetch-transaksi-buku',[TransaksiController::class,'fetch_transaksi_buku'])->name('fetch.transaksi.buku');
 Route::post('/store-transaksi',[TransaksiController::class,'store_transaksi'])->name('store.transaksi');
+Route::get('fetch-transaksi',[TransaksiController::class,'fetch_transaksi'])->name('fetch.transaksi');
+Route::get('/edit-transaksi/{id}',[TransaksiController::class,'edit_transaksi']);
+Route::get('/fetch-edit-transaksi-buku',[TransaksiController::class,'fetch_edit_transaksi_buku'])->name('fetch.edit.transaksi.buku');
+Route::post('/update-transaksi/{id}',[TransaksiController::class,'update_transaksi']);
 
 
 // buku
@@ -29,6 +33,7 @@ Route::get('/index-buku',[BukuController::class,'index_buku'])->name('index.buku
 Route::get('/fetch-buku',[BukuController::class,'fetch_buku'])->name('fetch.buku');
 Route::get('/create-buku',[BukuController::class,'create_buku'])->name('create.buku');
 Route::post('/store-buku',[BukuController::class,'store_buku'])->name('store.buku');
+Route::post('/hapus-buku/{id}',[BukuController::class,'delete_buku']);
 
 // Pelanggan
 Route::get('/index-pelanggan',[PelangganController::class,'index_pelanggan'])->name('index.pelanggan');

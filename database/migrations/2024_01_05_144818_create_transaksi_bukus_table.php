@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('tanggal_awal_peminjaman');
             $table->date('tanggal_akhir_peminjaman');
             $table->date('tanggal_pengembalian')->nullable();
+            $table->tinyInteger('hapus_transaksi_buku');
             $table->foreign('id_transaksi')
                 ->references('id')
                 ->on('transaksis')

@@ -22,9 +22,14 @@
     <table class="table table-striped table-sm" id="tabel_transaksi">
         <thead>
           <tr>
+            <th scope="col">ID Transaksi</th>
             <th scope="col">Nama Pelanggan</th>
             <th scope="col">Deskripsi Transaksi</th>
-            <th scope="col">Tanggal</th>
+            <th scope="col">Tercatat Tercatat</th>
+            <th scope="col">Buku</th>
+            <th scope="col">Tanggal Awal Peminjaman</th>
+            <th scope="col">Tanggal Akhir Peminjaman</th>
+            <th scope="col">Aksi</th>
           </tr>
         </thead>
     </table>
@@ -33,4 +38,49 @@
 @endsection
 
 @push('js')
+<script>
+  $(document).ready(function(){
+    $('#tabel_transaksi').DataTable({
+      processing:true,
+      serverSide:true,
+      ajax:{
+        url:"{{ route('fetch.transaksi') }}"
+      },
+      columns:[
+        {
+          data:'id_transaksi',
+          name:'id_transaksi'
+        },
+        {
+          data:'nama_pelanggan',
+          name:'nama_pelanggan'
+        },
+        {
+          data:'deskripsi_transaksi',
+          name:'deskripsi_transaksi'
+        },
+        {
+          data:'tercatat',
+          name:'tercatat'
+        },
+        {
+          data:'buku',
+          name:'buku'
+        },
+        {
+          data:'tanggal_awal_peminjaman',
+          name:'tanggal_awal_peminjaman'
+        },
+        {
+          data:'tanggal_akhir_peminjaman',
+          name:'tanggal_akhir_peminjaman'
+        },
+        {
+          data:'actions',
+          name:'actions'
+        },
+      ]
+    })
+  })
+</script>
 @endpush
