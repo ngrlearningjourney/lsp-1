@@ -17,24 +17,19 @@
 @endif
 <div class="mt-3 d-flex justify-content-between">
   <div class="title">
-    <h2>Daftar Transaksi</h2>
+    <h2>Daftar Buku</h2>
   </div>
   <div>
-    <a href="{{ route('create.transaksi.pelanggan') }}" class="btn btn-primary">Tambah Transaksi</a>
+    <a href="{{ route('create.buku') }}" class="btn btn-primary">Tambah Buku</a>
   </div>
 </div>
 <div class="index mt-3">
   <div class="table-responsive small">
-    <table class="table table-striped table-sm" id="tabel_transaksi">
+    <table class="table table-striped table-sm" id="tabel_buku">
         <thead>
           <tr>
-            <th scope="col">ID Transaksi</th>
-            <th scope="col">Nama Pelanggan</th>
-            <th scope="col">Deskripsi Transaksi</th>
-            <th scope="col">Tercatat Tercatat</th>
-            <th scope="col">Buku</th>
-            <th scope="col">Tanggal Awal Peminjaman</th>
-            <th scope="col">Tanggal Akhir Peminjaman</th>
+            <th scope="col">Nama Buku</th>
+            <th scope="col">Deskripsi Buku</th>
             <th scope="col">Aksi</th>
           </tr>
         </thead>
@@ -63,60 +58,44 @@
     </div>
   </div>
 </div>
+
+
 @endsection
 
 @push('js')
-<script>
-  $(document).ready(function(){
-    $('#tabel_transaksi').DataTable({
-      processing:true,
-      serverSide:true,
-      ajax:{
-        url:"{{ route('fetch.transaksi') }}"
-      },
-      columns:[
-        {
-          data:'id_transaksi',
-          name:'id_transaksi'
+  <script>
+    $(document).ready(function(){
+      $('#tabel_buku').DataTable({
+        processing:true,
+        serverSide:true,
+        ajax:{
+          url:"{{ route('fetch.buku') }}"
         },
-        {
-          data:'nama_pelanggan',
-          name:'nama_pelanggan'
-        },
-        {
-          data:'deskripsi_transaksi',
-          name:'deskripsi_transaksi'
-        },
-        {
-          data:'tercatat',
-          name:'tercatat'
-        },
-        {
-          data:'buku',
-          name:'buku'
-        },
-        {
-          data:'tanggal_awal_peminjaman',
-          name:'tanggal_awal_peminjaman'
-        },
-        {
-          data:'tanggal_akhir_peminjaman',
-          name:'tanggal_akhir_peminjaman'
-        },
-        {
-          data:'actions',
-          name:'actions'
-        },
-      ]
+        columns:[
+          {
+            data:'nama_buku',
+            name:'nama_buku'
+          },
+          {
+            data:'deskripsi_buku',
+            name:'deskripsi_buku'
+          },
+          {
+            data:'actions',
+            name:'actions'
+          }
+        ]
+      })
     })
-  })
 
-  let id_transaksi;
-  $(document).on('click','.delete',function(){
-    id_transaksi = $(this).attr('id');
-    $('#confirmModal').modal('show');
-    let link = "/hapus-transaksi/" + id_transaksi;
-    document.getElementById("form_action").setAttribute("action", link);
-  })
-</script>
+    let id_buku;
+    $(document).on('click','.delete',function(){
+      id_buku = $(this).attr('id');
+      $('#confirmModal').modal('show');
+      let link = "/hapus-buku/" + id_buku;
+      document.getElementById("form_action").setAttribute("action", link);
+    })
+
+    
+  </script>
 @endpush

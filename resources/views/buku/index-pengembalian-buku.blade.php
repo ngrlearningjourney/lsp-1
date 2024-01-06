@@ -9,21 +9,27 @@
 @endpush
 
 @section('content')
-<div class="mt-3 d-flex justify-content-between">
+@if(session()->has('message'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>    {{ session('message') }} </strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+<div class="mt-3">
   <div class="title">
     <h2>Daftar Buku</h2>
-  </div>
-  <div>
-    <a href="{{ route('create.buku') }}" class="btn btn-primary">Tambah Buku</a>
   </div>
 </div>
 <div class="index mt-3">
   <div class="table-responsive small">
-    <table class="table table-striped table-sm" id="tabel_buku">
+    <table class="table table-striped table-sm" id="tabel_pengembalian">
         <thead>
           <tr>
+            <th scope="col">Id Transaksi</th>
             <th scope="col">Nama Buku</th>
-            <th scope="col">Deskripsi Buku</th>
+            <th scope="col">Tanggal Peminjaman</th>
+            <th scope="col">Tanggal Wajib Pengembalian</th>
+            <th scope="col">Tanggal Pengembalian</th>
             <th scope="col">Aksi</th>
           </tr>
         </thead>
@@ -52,44 +58,52 @@
     </div>
   </div>
 </div>
-
-
 @endsection
 
 @push('js')
-  <script>
+<script>
     $(document).ready(function(){
-      $('#tabel_buku').DataTable({
+      $('#tabel_pengembalian').DataTable({
         processing:true,
         serverSide:true,
         ajax:{
-          url:"{{ route('fetch.buku') }}"
+          url:"{{ route('fetch.pengembalian.buku') }}"
         },
         columns:[
+          {
+            data:'id_transaksi',
+            name:'id_transaksi'
+          },
           {
             data:'nama_buku',
             name:'nama_buku'
           },
           {
-            data:'deskripsi_buku',
-            name:'deskripsi_buku'
+            data:'tanggal_awal_peminjaman',
+            name:'tanggal_awal_peminjaman'
+          },
+          {
+            data:'tanggal_akhir_peminjaman',
+            name:'tanggal_pengembalian'
+          },
+          {
+            data:'tanggal_pengembalian',
+            name:'tanggal_pengembalian'
           },
           {
             data:'actions',
             name:'actions'
-          }
+          },
         ]
       })
     })
 
-    let id_buku;
+    let id_transaksi_buku;
     $(document).on('click','.delete',function(){
-      id_buku = $(this).attr('id');
+      id_transaksi_buku = $(this).attr('id');
       $('#confirmModal').modal('show');
-      let link = "/hapus-buku/" + id_buku;
+      let link = "/delete-pengembalian-buku/" + id_transaksi_buku;
       document.getElementById("form_action").setAttribute("action", link);
     })
-
-    
-  </script>
+</script>
 @endpush

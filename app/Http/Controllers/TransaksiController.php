@@ -51,13 +51,15 @@ class TransaksiController extends Controller
     }
 
     public function store_transaksi(Request $request){
+        $request->validate([
+            'deskripsi_transaksi' => 'required'
+        ]);
         $array_bukus = [];
         foreach($request->all() as $r){
             if(str_contains($r,'buku_')){
                 array_push($array_bukus,substr($r,5));
             }
         }
-        // dd($array_bukus);
         if($array_bukus){
             $transaski_terbaru = Transaksi::create([
                 "id_pelanggan" => $request->id_pelanggan,
@@ -80,16 +82,16 @@ class TransaksiController extends Controller
                     "jumlah_buku" => 0
                 ]);
             }
-            return redirect('/');
+            return redirect('/')->with('message','berhasil menambahkan transaksi');
         }else{
-            dd('gakada');
+            return redirect('/pilih-pelanggan/'. $request->id_pelanggan)->with('message','transaksi gagal dilakukan');
         }
     }
 
     public function fetch_transaksi(){
         $array_transaksis = [];
 
-        $transaksis = Transaksi::leftJoin('pelanggans','transaksis.id_pelanggan','=','pelanggans.id')
+        $transaksis = Transaksi::leftJoin('pelanggans','transaksis.id_pelanggan','=','pelanggans.id')->where("transaksis.hapus_transaksi",0)
         ->get([
             "pelanggans.nama_pelanggan",
             "transaksis.id",
@@ -215,47 +217,81 @@ class TransaksiController extends Controller
     }   
 
     public function update_transaksi($id,Request $request){
-        $transaksi_sebelum_edits = TransaksiBuku::where('id_transaksi',$id)->get();
-        $id_buku_sebelum_edits = [];
-        foreach($transaksi_sebelum_edits as $transaksi_sebelum_edit){
-            array_push($id_buku_sebelum_edits,(int)$transaksi_sebelum_edit->id_buku);
-        }
-        Buku::whereIn('id',$id_buku_sebelum_edits)->update([
-            "jumlah_buku" => 1
-        ]);
-        
         $array_bukus = [];
         foreach($request->all() as $r){
             if(str_contains($r,'buku')){
-                array_push($array_bukus,(int)substr($r,4));
+                array_push($array_bukus,substr($r,4));
             }
         }
+        if($array_bukus){
+            $transaksi_sebelum_edits = TransaksiBuku::where('id_transaksi',$id)->get();
+            $id_buku_sebelum_edits = [];
+            foreach($transaksi_sebelum_edits as $transaksi_sebelum_edit){
+                array_push($id_buku_sebelum_edits,(int)$transaksi_sebelum_edit->id_buku);
+            }
+            Buku::whereIn('id',$id_buku_sebelum_edits)->update([
+                "jumlah_buku" => 1
+            ]);
+            
+            $array_bukus = [];
+            foreach($request->all() as $r){
+                if(str_contains($r,'buku')){
+                    array_push($array_bukus,(int)substr($r,4));
+                }
+            }
+    
+            Buku::whereIn('id',$array_bukus)->update([
+                "jumlah_buku" => 0
+            ]);
+    
+            Transaksi::find($id)->update([
+                "deskripsi_transaksi" => $request->deskripsi_transaksi
+            ]);
+    
+            TransaksiBuku::where("id_transaksi",$id)->update([
+                "hapus_transaksi_buku" => 1
+            ]);
+    
+            $date_now = date('Y-m-d');
+            $tanggal_pengembalian = date('Y-m-d',strtotime("$date_now +7 day"));
+            foreach($array_bukus as $buku){
+                TransaksiBuku::create([
+                    "id_transaksi" => (int)$id,
+                    "id_buku" => (int)$buku,
+                    "tanggal_awal_peminjaman" => $date_now,
+                    "tanggal_akhir_peminjaman" => $tanggal_pengembalian,
+                    "tanggal_pengembalian" => null,
+                    "hapus_transaksi_buku" => 0
+                ]);
+            }
+    
+            return redirect('/')->with('message','transaksi berhasil dirubah');
+        }else{
+            return redirect('/edit-transaksi/'. $id)->with('message','transaksi gagal dirubah');
+        }
+    }
 
-        Buku::whereIn('id',$array_bukus)->update([
-            "jumlah_buku" => 0
-        ]);
+    public function delete_transaksi($id){
+        $transaksi_bukus = TransaksiBuku::where("id_transaksi",$id)->where('hapus_transaksi_buku',0)->get();
+        $array_id_buku = [];
+        foreach($transaksi_bukus as $transaksi_buku){
+            array_push($array_id_buku,$transaksi_buku->id_buku);
+        }
 
-        Transaksi::find($id)->update([
-            "deskripsi_transaksi" => $request->deskripsi_transaksi
-        ]);
-
-        TransaksiBuku::where("id_transaksi",$id)->update([
-            "hapus_transaksi_buku" => 1
-        ]);
-
-        $date_now = date('Y-m-d');
-        $tanggal_pengembalian = date('Y-m-d',strtotime("$date_now +7 day"));
-        foreach($array_bukus as $buku){
-            TransaksiBuku::create([
-                "id_transaksi" => (int)$id,
-                "id_buku" => (int)$buku,
-                "tanggal_awal_peminjaman" => $date_now,
-                "tanggal_akhir_peminjaman" => $tanggal_pengembalian,
-                "tanggal_pengembalian" => null,
-                "hapus_transaksi_buku" => 0
+        foreach($array_id_buku as $id_buku){
+            Buku::find($id_buku)->update([
+                "jumlah_buku" => 1
             ]);
         }
 
-        return redirect('/');
+        TransaksiBuku::where('id_transaksi',(int)$id)->update([
+            "hapus_transaksi_buku" => 1
+        ]);
+
+        Transaksi::where('id',(int)$id)->update([
+            "hapus_transaksi" => 1
+        ]);
+
+        return redirect('/')->with('message','berhasil dihapus');
     }
 }

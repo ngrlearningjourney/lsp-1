@@ -9,6 +9,21 @@
 @endpush
 
 @section('content')
+
+@if(session()->has('message'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>    {{ session('message') }} </strong>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+@endif
+
+@if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong> Memasukkan Transaksi Gagal Dilakukan! </strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+@endif
+
 <div class="mt-3">
     <form action="{{ route('store.transaksi') }}" method="post">
         @csrf

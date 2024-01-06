@@ -23,4 +23,8 @@ class Buku extends Model
     public function transaksis(){
         return $this->belongsToMany(Transaksi::class);
     }
+
+    public function fileBuku(){
+        return $this->hasMany(FileBuku::class);
+    }
 }
