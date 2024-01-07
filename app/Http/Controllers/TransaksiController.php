@@ -12,18 +12,19 @@ use Illuminate\Http\Request;
 class TransaksiController extends Controller
 {
     public function index_transaksi(){
-        $slug = "transaksi";
-        return view('/transaksi/welcome', [
-            "slug" => $slug
-        ]);
+        // method ini digunakna untuk menapilkan welcome page yang berisikan index transaksi
+        return view('/transaksi/welcome');
     }
     public function create_transaksi_pelanggan(){
-        return view('/transaksi/form-insert-transaksi-pelanggan',[
-            "slug" => "transaksi"
-        ]);
+        // method ini digunakna untuk menapilkan form pemilihan pelanggan yang berisikan index daftar pelanggan
+        return view('/transaksi/form-insert-transaksi-pelanggan');
     }
 
     public function fetch_transaksi_pelanggan(){
+        // method ini digunakan untuk mengambil data dan mengimplementasikannya kepada data table
+
+        // data yang diambil disini merupakan data pelanggan dan melalui ini kita juga menambah satu kolom baru yang berisikan button pilih pelanggan
+
         $pelanggans = Pelanggan::where('hapus_pelanggan',0)->get();
         return datatables()::of($pelanggans)
         ->addColumn('action','<a href="/pilih-pelanggan/{{ $id }}" class="btn btn-primary">Pilih</a>')
@@ -33,6 +34,10 @@ class TransaksiController extends Controller
     }
 
     public function fetch_transaksi_buku(){
+        // method ini bertujuan untuk mengambil data yang berada pada table buku
+
+        // method ini juga menambahkan column baru pada datatable yang akan diisikan checkbox untuk memili buku yang ingin di pinjam
+
         $bukus = Buku::where('hapus_buku',0)->where('jumlah_buku',1)->get();
         return datatables()::of($bukus)
                     ->addColumn('actions','<input class="form-check-input" name="{{ "buku_". $id }}" type="checkbox" value="{{ "buku_". $id }}" id="flexCheckDefault">')
@@ -42,6 +47,8 @@ class TransaksiController extends Controller
     }
 
     public function create_transaksi($id){
+        // method ini bertujuan utnuk menampilkan form insert transaksi buku
+
         $pelanggan = Pelanggan::find($id);
         $date_now = date('Y-m-d');
         $tanggal_pengembalian = date('Y-m-d',strtotime("$date_now +7 day"));
@@ -56,6 +63,9 @@ class TransaksiController extends Controller
     }
 
     public function store_transaksi(Request $request){
+        // method ini bertujuan untuk memasukkan data transaksi peminjaman buku ke dalam database
+
+        // dimulai dengan memvalidasi input dan mengecek kesalahan user
         $request->validate([
             'deskripsi_transaksi' => 'required'
         ]);
@@ -66,6 +76,7 @@ class TransaksiController extends Controller
             }
         }
         if($array_bukus){
+            // hingga memasukkan transaksi ke dalam database sesuai dengan ketentuan atribut masing masing
             $transaski_terbaru = Transaksi::create([
                 "id_pelanggan" => $request->id_pelanggan,
                 "deskripsi_transaksi" => $request->deskripsi_transaksi,
@@ -87,13 +98,17 @@ class TransaksiController extends Controller
                     "jumlah_buku" => 0
                 ]);
             }
+            // jika benar akan kembali ke halaman daftar transaksi
             return redirect('/index-transaksi')->with('message','berhasil menambahkan transaksi');
         }else{
+
+            // jika salah akan mengembalikan pemberitahuan dan mengembalikan ke form memasukkan transaksi peminjaman
             return redirect('/pilih-pelanggan/'. $request->id_pelanggan)->with('message','transaksi gagal dilakukan');
         }
     }
 
     public function fetch_transaksi(){
+        // method ini bertujuan mengambil data transaksi pada database dan menampilkannya pada datatable
         $array_transaksis = [];
 
         $transaksis = Transaksi::leftJoin('pelanggans','transaksis.id_pelanggan','=','pelanggans.id')->where("transaksis.hapus_transaksi",0)
@@ -104,7 +119,7 @@ class TransaksiController extends Controller
             "transaksis.created_at"
         ]);
 
-
+        // mencari tahu buku apa saja yang dipinjam pada 1 kali transaksi
         foreach($transaksis as $transaksi){
             $array_bukus = [];
             $bukus = TransaksiBuku::where('id_transaksi',$transaksi->id)->where('tanggal_pengembalian',null)->where('hapus_transaksi_buku',0)->leftJoin('bukus','transaksi_bukus.id_buku','=','bukus.id')
@@ -128,6 +143,7 @@ class TransaksiController extends Controller
             ]);
         }
         
+        // menampilkannya pada datatable dan menambahkan 2 tombol tambahan untuk memberikan kemudahan pengguna untuk mengedit dan menghapus transaksi peminjaman
         return datatables()::of($array_transaksis)
         ->addColumn('actions','
             <div class="d-flex">
@@ -143,7 +159,7 @@ class TransaksiController extends Controller
 
 
     public function edit_transaksi($id){
-        // mencari transaksi yang sesuai dengan yang dipilih pada halaman index transaksi
+        // mencari transaksi yang sesuai dengan yang dipilih pada halaman index transaksi dan menampilkannya pada halaman edit transaksi
         $transaksis = Transaksi::find($id)
         ->leftJoin('pelanggans','transaksis.id_pelanggan','=','pelanggans.id')
         ->leftJoin('transaksi_bukus','transaksis.id','=','transaksi_bukus.id_transaksi')
@@ -154,27 +170,9 @@ class TransaksiController extends Controller
         $tanggal_awal_peminjaman = $transaksis[0]->tanggal_awal_peminjaman;
         $tanggal_akhir_peminjaman = $transaksis[0]->tanggal_akhir_peminjaman;
         $deskripsi_transaksi = $transaksis[0]->deskripsi_transaksi;
-        $array_bukus = [];
-        $array_id_buku = [];
-        foreach($transaksis as $transaksi){
-            $buku = Buku::find($transaksi->id_buku);
-            array_push($array_bukus,(object)[
-                "id_buku" =>$buku->id, 
-                "nama_buku" => $buku->nama_buku,
-                "deskripsi_buku" => $buku->deskripsi_buku,
-                "terpilih" => 1
-            ]);
-            array_push($array_id_buku, $buku->id);
-        }
-        $buku_tidak_terpilihs = Buku::whereNotIn('id',$array_id_buku)->where('hapus_buku',0)->get();
-        foreach($buku_tidak_terpilihs as $buku_tidak_terpilih){
-            array_push($array_bukus,(object)[
-                "id_buku" =>$buku_tidak_terpilih->id, 
-                "nama_buku" => $buku_tidak_terpilih->nama_buku,
-                "deskripsi_buku" => $buku_tidak_terpilih->deskripsi_buku,
-                "terpilih" => 0
-            ]);
-        };
+        
+
+        // menampilkan seluruh data yang dikumpulkan pada form guna mengubah transaksi
         return view('transaksi/form-update-transaksi',[
             "nama_pelanggan" => $nama_pelanggan,
             "tanggal_awal_peminjaman" => $tanggal_awal_peminjaman,
@@ -182,13 +180,14 @@ class TransaksiController extends Controller
             "id_pelanggan" => $id_pelanggan,
             "deskripsi_transaksi" => $deskripsi_transaksi,
             "id_transaksi"=>$id,
-            "slug" => "transaksi"
         ]);
     }
 
     public function fetch_edit_transaksi_buku(Request $request){
+        // mengambil buku yang telah dipinjam oleh pelanggan
         $transaksis = TransaksiBuku::where('id_transaksi',(int)$request->data)->where('hapus_transaksi_buku',0)->get();
 
+        // mengumpulkan buku buku yang telah dipinjam pelanggan dalam bentuk array of object
         $array_bukus = [];
         $array_id_buku = [];
         foreach($transaksis as $transaksi){
@@ -203,6 +202,7 @@ class TransaksiController extends Controller
             array_push($array_id_buku, $buku->id);
         }
 
+        // mengumpulkan buku buku yang belum dipinjam pelanggan dalam bentuk array of object
         $buku_tidak_terpilihs = Buku::whereNotIn('id',$array_id_buku)->where('hapus_buku',0)->where('jumlah_buku',1)->get();
         foreach($buku_tidak_terpilihs as $buku_tidak_terpilih){
             array_push($array_bukus,(object)[
@@ -214,6 +214,7 @@ class TransaksiController extends Controller
             ]);
         };
 
+        // menampilkannya dalam bentuk datatable
         return datatables()::of($array_bukus)
         ->addColumn('actions', 'component/action-update-transaksi')
         ->rawColumns(['actions'])
@@ -223,12 +224,18 @@ class TransaksiController extends Controller
     }   
 
     public function update_transaksi($id,Request $request){
+
+        // method ini berguna untuk melakukan pembaruan transaksi
+
+        // dimulai dari pemilihan buku baru yang dipilih
         $array_bukus = [];
         foreach($request->all() as $r){
             if(str_contains($r,'buku')){
                 array_push($array_bukus,substr($r,4));
             }
         }
+
+        // dan memasukkan transaksi perubahan maupun mengubah beberapa value attribute ke dalam database
         if($array_bukus){
             $transaksi_sebelum_edits = TransaksiBuku::where('id_transaksi',$id)->get();
             $id_buku_sebelum_edits = [];
@@ -270,30 +277,35 @@ class TransaksiController extends Controller
                     "hapus_transaksi_buku" => 0
                 ]);
             }
-    
+            // jika berhasil 
             return redirect('/index-transaksi')->with('message','transaksi berhasil dirubah');
         }else{
+            // jika tidak berhasil 
             return redirect('/edit-transaksi/'. $id)->with('message','transaksi gagal dirubah');
         }
     }
 
     public function delete_transaksi($id){
+        // method ini berguna untuk melakukan penghapusan transaksi peminjaman
         $transaksi_bukus = TransaksiBuku::where("id_transaksi",$id)->where('hapus_transaksi_buku',0)->get();
         $array_id_buku = [];
         foreach($transaksi_bukus as $transaksi_buku){
             array_push($array_id_buku,$transaksi_buku->id_buku);
         }
 
+        // buku dikembalikan seperti semula agar dapat dipinjam
         foreach($array_id_buku as $id_buku){
             Buku::find($id_buku)->update([
                 "jumlah_buku" => 1
             ]);
         }
 
+        // transaksi buku -- pengubahan isi pivot table antara transaksi dan buku --lama terhapus
         TransaksiBuku::where('id_transaksi',(int)$id)->update([
             "hapus_transaksi_buku" => 1
         ]);
 
+        // transaksi lama terhapus
         Transaksi::where('id',(int)$id)->update([
             "hapus_transaksi" => 1
         ]);

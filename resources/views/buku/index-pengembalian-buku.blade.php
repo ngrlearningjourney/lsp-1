@@ -26,6 +26,7 @@
         <thead>
           <tr>
             <th scope="col">Id Transaksi</th>
+            <th scope="col">Nama Pelanggan</th>
             <th scope="col">Nama Buku</th>
             <th scope="col">Tanggal Peminjaman</th>
             <th scope="col">Tanggal Wajib Pengembalian</th>
@@ -73,6 +74,10 @@
           {
             data:'id_transaksi',
             name:'id_transaksi'
+          },
+          {
+            data:'nama_pelanggan',
+            name:'nama_pelanggan'
           },
           {
             data:'nama_buku',
