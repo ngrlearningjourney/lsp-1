@@ -92,11 +92,11 @@
   </head>
   <body class="d-flex align-items-center py-4 bg-body-tertiary">
 <main class="form-signin w-100 m-auto">
-@if(session()->has('message'))
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  <strong>    {{ session('message') }} </strong>
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
+@if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong> Memasukkan Buku Gagal Dilakukan! </strong>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
 @endif
   <form action="/sign-up-store" method="post">
     @csrf

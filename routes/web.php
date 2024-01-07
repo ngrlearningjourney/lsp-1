@@ -33,10 +33,10 @@ Route::post('/hapus-transaksi/{id}',[TransaksiController::class,'delete_transaks
 
 
 // buku
-Route::get('/index-buku',[BukuController::class,'index_buku'])->name('index.buku');
-Route::get('/fetch-buku',[BukuController::class,'fetch_buku'])->name('fetch.buku');
-Route::get('/create-buku',[BukuController::class,'create_buku'])->name('create.buku');
-Route::post('/store-buku',[BukuController::class,'store_buku'])->name('store.buku');
+Route::get('/index-buku',[BukuController::class,'index_buku'])->name('index.buku'); 
+Route::get('/fetch-buku',[BukuController::class,'fetch_buku'])->name('fetch.buku'); 
+Route::get('/create-buku',[BukuController::class,'create_buku'])->name('create.buku'); 
+Route::post('/store-buku',[BukuController::class,'store_buku'])->name('store.buku'); 
 Route::post('/hapus-buku/{id}',[BukuController::class,'delete_buku']);
 Route::get('/edit-buku/{id}',[BukuController::class,'edit_buku']);
 Route::post('/hapus-gambar/{id}',[BukuController::class,'delete_gambar']);
@@ -52,15 +52,15 @@ Route::get('/edit-pelanggan/{id}',[PelangganController::class,'edit_pelanggan'])
 Route::post('/update-pelanggan/{id}',[PelangganController::class,'update_pelanggan']);
 
 // pengembalian buku
-Route::get('/index-pengembalian-buku',[BukuController::class,'index_pengembalian_buku'])->name('index.pengembalian.buku');
-Route::get('/fetch-pengembalian-buku',[BukuController::class,'fetch_pengembalian_buku'])->name('fetch.pengembalian.buku');
-Route::get('/create-pengembalian-buku/{id}',[BukuController::class,'create_pengembalian_buku']);
-Route::post('/store-pengembalian-buku/{id}',[BukuController::class,'store_pengembalian_buku']);
-Route::post('/delete-pengembalian-buku/{id}',[BukuController::class,'delete_pengembalian_buku']);
-Route::get('/logout',[UserController::class,'logout']);
+Route::get('/index-pengembalian-buku',[BukuController::class,'index_pengembalian_buku'])->name('index.pengembalian.buku'); //sudah
+Route::get('/fetch-pengembalian-buku',[BukuController::class,'fetch_pengembalian_buku'])->name('fetch.pengembalian.buku'); // sudah
+Route::get('/create-pengembalian-buku/{id}',[BukuController::class,'create_pengembalian_buku']); // sudah
+Route::post('/store-pengembalian-buku/{id}',[BukuController::class,'store_pengembalian_buku']); // sudah
+Route::post('/delete-pengembalian-buku/{id}',[BukuController::class,'delete_pengembalian_buku']); // sudah
+Route::get('/logout',[UserController::class,'logout']); // sudah
 });
 
-Route::post('/sign-in-store',[UserController::class,'store_signin']);
-Route::post('/sign-up-store',[UserController::class,'store_signup']);
-Route::get('/',[UserController::class,'create_signin'])->middleware('alreadyLoggedIn');
-Route::get('/sign-up',[UserController::class,'create_signup'])->middleware('alreadyLoggedIn');
+Route::post('/sign-in-store',[UserController::class,'store_signin']); //sudah
+Route::post('/sign-up-store',[UserController::class,'store_signup']); // sudah
+Route::get('/',[UserController::class,'create_signin'])->middleware('alreadyLoggedIn'); // sudah
+Route::get('/sign-up',[UserController::class,'create_signup'])->middleware('alreadyLoggedIn'); // sudah
