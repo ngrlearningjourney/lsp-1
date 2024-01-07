@@ -12,10 +12,15 @@ use Illuminate\Http\Request;
 class TransaksiController extends Controller
 {
     public function index_transaksi(){
-        return view('/transaksi/welcome');
+        $slug = "transaksi";
+        return view('/transaksi/welcome', [
+            "slug" => $slug
+        ]);
     }
     public function create_transaksi_pelanggan(){
-        return view('/transaksi/form-insert-transaksi-pelanggan');
+        return view('/transaksi/form-insert-transaksi-pelanggan',[
+            "slug" => "transaksi"
+        ]);
     }
 
     public function fetch_transaksi_pelanggan(){
@@ -40,13 +45,13 @@ class TransaksiController extends Controller
         $pelanggan = Pelanggan::find($id);
         $date_now = date('Y-m-d');
         $tanggal_pengembalian = date('Y-m-d',strtotime("$date_now +7 day"));
-        // dd($pelangga);
 
         return view('/transaksi/form-insert-transaksi',[
             'id_pelanggan' => $pelanggan->id,
             'nama_pelanggan' => $pelanggan->nama_pelanggan,
             'tanggal_peminjaman' => $date_now,
-            'tanggal_pengembalian' => $tanggal_pengembalian
+            'tanggal_pengembalian' => $tanggal_pengembalian,
+            'slug' => 'transaksi'
         ]);
     }
 
@@ -82,7 +87,7 @@ class TransaksiController extends Controller
                     "jumlah_buku" => 0
                 ]);
             }
-            return redirect('/')->with('message','berhasil menambahkan transaksi');
+            return redirect('/index-transaksi')->with('message','berhasil menambahkan transaksi');
         }else{
             return redirect('/pilih-pelanggan/'. $request->id_pelanggan)->with('message','transaksi gagal dilakukan');
         }
@@ -102,7 +107,7 @@ class TransaksiController extends Controller
 
         foreach($transaksis as $transaksi){
             $array_bukus = [];
-            $bukus = TransaksiBuku::where('id_transaksi',$transaksi->id)->where('hapus_transaksi_buku',0)->leftJoin('bukus','transaksi_bukus.id_buku','=','bukus.id')
+            $bukus = TransaksiBuku::where('id_transaksi',$transaksi->id)->where('tanggal_pengembalian',null)->where('hapus_transaksi_buku',0)->leftJoin('bukus','transaksi_bukus.id_buku','=','bukus.id')
             ->get([
                 "bukus.nama_buku",
                 "transaksi_bukus.tanggal_awal_peminjaman",
@@ -176,7 +181,8 @@ class TransaksiController extends Controller
             "tanggal_akhir_peminjaman" => $tanggal_akhir_peminjaman,
             "id_pelanggan" => $id_pelanggan,
             "deskripsi_transaksi" => $deskripsi_transaksi,
-            "id_transaksi"=>$id
+            "id_transaksi"=>$id,
+            "slug" => "transaksi"
         ]);
     }
 
@@ -265,7 +271,7 @@ class TransaksiController extends Controller
                 ]);
             }
     
-            return redirect('/')->with('message','transaksi berhasil dirubah');
+            return redirect('/index-transaksi')->with('message','transaksi berhasil dirubah');
         }else{
             return redirect('/edit-transaksi/'. $id)->with('message','transaksi gagal dirubah');
         }
@@ -292,6 +298,6 @@ class TransaksiController extends Controller
             "hapus_transaksi" => 1
         ]);
 
-        return redirect('/')->with('message','berhasil dihapus');
+        return redirect('/index-transaksi')->with('message','berhasil dihapus');
     }
 }

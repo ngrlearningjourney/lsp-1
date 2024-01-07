@@ -3,6 +3,7 @@
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +16,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::middleware('isLoggedIn')->group(function(){
 // transaksi
-Route::get('/', [TransaksiController::class,'index_transaksi'])->name('index.transaksi');
+Route::get('/index-transaksi', [TransaksiController::class,'index_transaksi'])->name('index.transaksi');
 Route::get('/create-transaksi-pelanggan', [TransaksiController::class,'create_transaksi_pelanggan'])->name('create.transaksi.pelanggan');
 Route::get('/fetch-transaksi-pelanggan',[TransaksiController::class,'fetch_transaksi_pelanggan'])->name('fetch.transaksi.pelanggan');
 Route::get('/pilih-pelanggan/{id}',[TransaksiController::class,'create_transaksi'])->name('create.transaksi');
@@ -54,4 +57,10 @@ Route::get('/fetch-pengembalian-buku',[BukuController::class,'fetch_pengembalian
 Route::get('/create-pengembalian-buku/{id}',[BukuController::class,'create_pengembalian_buku']);
 Route::post('/store-pengembalian-buku/{id}',[BukuController::class,'store_pengembalian_buku']);
 Route::post('/delete-pengembalian-buku/{id}',[BukuController::class,'delete_pengembalian_buku']);
+Route::get('/logout',[UserController::class,'logout']);
+});
 
+Route::post('/sign-in-store',[UserController::class,'store_signin']);
+Route::post('/sign-up-store',[UserController::class,'store_signup']);
+Route::get('/',[UserController::class,'create_signin'])->middleware('alreadyLoggedIn');
+Route::get('/sign-up',[UserController::class,'create_signup'])->middleware('alreadyLoggedIn');

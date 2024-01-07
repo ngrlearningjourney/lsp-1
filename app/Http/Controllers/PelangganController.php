@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 class PelangganController extends Controller
 {
     public function index_pelanggan(){
-        return view('/pelanggan/index-pelanggan');
+        return view('/pelanggan/index-pelanggan',[
+            "slug" => "pelanggan"
+        ]);
     }
 
     public function fetch_pelanggan(){
@@ -26,7 +28,9 @@ class PelangganController extends Controller
     }
 
     public function create_pelanggan(){
-        return view('/pelanggan/form-insert-pelanggan');
+        return view('/pelanggan/form-insert-pelanggan',[
+            "slug" => "pelanggan"
+        ]);
     }
 
     public function store_pelanggan(Request $request){
@@ -54,7 +58,8 @@ class PelangganController extends Controller
         $pelanggan = Pelanggan::find((int)$id);
         return view('/pelanggan/form-update-pelanggan',[
             "nama_pelanggan" => $pelanggan->nama_pelanggan,
-            "id_pelanggan" => $pelanggan->id
+            "id_pelanggan" => $pelanggan->id,
+            "slug" => "pelanggan"
         ]);
     }
 

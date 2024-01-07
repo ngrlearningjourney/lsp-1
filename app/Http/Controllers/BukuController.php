@@ -13,10 +13,19 @@ use Illuminate\Support\Facades\Validator;
 class BukuController extends Controller
 {
     public function index_buku(){
-        return view('/buku/index-buku');
+        // method untuk menampilkan halaman index buku
+        return view('/buku/index-buku',[
+            "slug" => "buku"
+        ]);
     }
 
     public function fetch_buku(){
+        // method ini digunakan untuk menampilkan datatable menggunakan ajax dan jquery. Data Table ini terisi data buku yang tersimpan pada database bukus. 
+
+        // disini saya juga menambahkan 1 kolom baru bernama "actions" yang berisikan tombol ubah dan hapus
+
+        // tombol ubah akan membawa ke halaman edit buku sedangkan tombol hapus akan melaksanakan penghapusan buku
+
         $bukus = Buku::where('hapus_buku',0)->get();
         return datatables()::of($bukus)
         ->addColumn('actions',
@@ -33,7 +42,13 @@ class BukuController extends Controller
     }
 
     public function create_buku(){
-        return view('/buku/form-insert-buku');
+        // method ini digunakan untuk menampilkan form insert buku
+
+        // slug adalah variabel yang dipakai untuk menandai sidebar
+
+        return view('/buku/form-insert-buku',[
+            "slug" => "buku"
+        ]);
     }
 
     public function store_buku(Request $request){
@@ -88,7 +103,8 @@ class BukuController extends Controller
             "id_buku" => $buku->id,
             "nama_buku" => $buku->nama_buku,
             "deskripsi_buku" => $buku->deskripsi_buku,
-            "array_file_bukus" => $array_file_bukus
+            "array_file_bukus" => $array_file_bukus,
+            "slug" => "buku"
         ]);
 
     }
@@ -127,7 +143,9 @@ class BukuController extends Controller
     }
 
     public function index_pengembalian_buku(){
-        return view('/buku/index-pengembalian-buku');
+        return view('/buku/index-pengembalian-buku',[
+            "slug" => "pengembalian_buku"
+        ]);
     }
 
     public function fetch_pengembalian_buku() {
@@ -180,7 +198,8 @@ class BukuController extends Controller
             "tanggal_akhir_peminjaman" => $transaksi_buku->tanggal_akhir_peminjaman,
             "tanggal_hari_ini" => date('Y-m-d'),
             "id_buku" => $transaksi_buku->id_buku,
-            "id_transaksi_buku" => $id
+            "id_transaksi_buku" => $id,
+            "slug" => "pengembalian_buku"
         ]);
     }
 
