@@ -238,7 +238,7 @@ class BukuController extends Controller
 
         // pencarian id transaksi dan buku pada pivot table
         TransaksiBuku::where('id_transaksi',(int)$id_transaksi)->where('id_buku',(int)$id_buku)->where('hapus_transaksi_buku',0)->update([
-            "tanggal_pengembalian" => $request->tanggal_hari_ini
+            "tanggal_pengembalian" => $request->tanggal_hari_ini,
         ]);
         // update buku, sehingga bisa dipinjamkan kembali
         Buku::find($id_buku)->update([

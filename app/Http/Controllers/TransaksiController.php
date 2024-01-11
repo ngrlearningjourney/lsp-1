@@ -75,6 +75,7 @@ class TransaksiController extends Controller
                 array_push($array_bukus,substr($r,5));
             }
         }
+
         if($array_bukus){
             // hingga memasukkan transaksi ke dalam database sesuai dengan ketentuan atribut masing masing
             $transaski_terbaru = Transaksi::create([
@@ -128,19 +129,21 @@ class TransaksiController extends Controller
                 "transaksi_bukus.tanggal_awal_peminjaman",
                 "transaksi_bukus.tanggal_akhir_peminjaman"
             ]);
-            foreach($bukus as $buku){
-                array_push($array_bukus,$buku->nama_buku);
-            };
-            $buku_pinjaman = implode(",", $array_bukus);
-            array_push($array_transaksis, (object)[
-                "id_transaksi" => $transaksi->id,
-                "nama_pelanggan" =>$transaksi->nama_pelanggan,
-                "deskripsi_transaksi" => $transaksi->deskripsi_transaksi,
-                "tercatat" => $transaksi->created_at->toDateString(),
-                "buku"=> $buku_pinjaman,
-                "tanggal_awal_peminjaman" => $bukus[0]->tanggal_awal_peminjaman,
-                "tanggal_akhir_peminjaman" => $bukus[0]->tanggal_akhir_peminjaman,
-            ]);
+            if(count($bukus)){
+                foreach($bukus as $buku){
+                    array_push($array_bukus,$buku->nama_buku);
+                };
+                $buku_pinjaman = implode(",", $array_bukus);
+                array_push($array_transaksis, (object)[
+                    "id_transaksi" => $transaksi->id,
+                    "nama_pelanggan" =>$transaksi->nama_pelanggan,
+                    "deskripsi_transaksi" => $transaksi->deskripsi_transaksi,
+                    "tercatat" => $transaksi->created_at->toDateString(),
+                    "buku"=> $buku_pinjaman,
+                    "tanggal_awal_peminjaman" => $bukus[0]->tanggal_awal_peminjaman,
+                    "tanggal_akhir_peminjaman" => $bukus[0]->tanggal_akhir_peminjaman,
+                ]);
+            }
         }
         
         // menampilkannya pada datatable dan menambahkan 2 tombol tambahan untuk memberikan kemudahan pengguna untuk mengedit dan menghapus transaksi peminjaman
@@ -185,7 +188,7 @@ class TransaksiController extends Controller
 
     public function fetch_edit_transaksi_buku(Request $request){
         // mengambil buku yang telah dipinjam oleh pelanggan
-        $transaksis = TransaksiBuku::where('id_transaksi',(int)$request->data)->where('hapus_transaksi_buku',0)->get();
+        $transaksis = TransaksiBuku::where('id_transaksi',(int)$request->data)->where('hapus_transaksi_buku',0)->where('tanggal_pengembalian',null)->get();
 
         // mengumpulkan buku buku yang telah dipinjam pelanggan dalam bentuk array of object
         $array_bukus = [];
